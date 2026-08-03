@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Calendário da quadra</h2>
+
+    <div class="calendario">
+        <div class="calendario-topo">
+            <button type="button" id="mes-anterior" aria-label="Mês anterior">&#8592;</button>
+            <span id="mes-atual"></span>
+            <button type="button" id="mes-seguinte" aria-label="Próximo mês">&#8594;</button>
+        </div>
+        <div class="calendario-semana">
+            <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+        </div>
+        <div class="calendario-dias" id="calendario-dias"></div>
+        <p class="calendario-legenda"><span class="bolinha"></span> Dia com evento marcado</p>
+    </div>
+
+    <h2>Avisos e eventos</h2>
+
+    {% if posts %}
+        <div class="mural">
+            {% for post in posts %}
+                <div class="card">
+                    <h3>{{ post.titulo }}</h3>
+                    <p>{{ post.conteudo }}</p>
+
+                    {% if post.data_evento %}
+                        <p class="data-evento">📅 {{ post.data_evento.strftime('%d/%m/%Y') }}</p>
+                    {% endif %}
+{% if session.get('admin_logado') %}
+                    <a class="apagar" href="{{ url_for('deletar_post', post_id=post.id) }}"
+                       onclick="return confirm('Apagar este aviso?')">Apagar</a>
+                       {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Nenhum aviso no momento.</p>
+    {% endif %}
+
+    <!-- Dados que vieram do Flask, prontos pro JavaScript do calendário usar -->
+    <script>
+        const datasOcupadas = {{ datas_ocupadas | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='calendario.js') }}"></script>
+{% endblock %}
+

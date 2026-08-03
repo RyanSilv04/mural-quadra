@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Novo aviso</h2>
+
+    <form method="POST" class="formulario">
+        <label for="titulo">Título</label>
+        <input type="text" id="titulo" name="titulo" required maxlength="150">
+
+        <label for="conteudo">Descrição</label>
+        <textarea id="conteudo" name="conteudo" rows="4" required></textarea>
+
+        <label for="data_evento">Data do evento (opcional)</label>
+        <input type="date" id="data_evento" name="data_evento">
+
+        <button type="submit">Publicar no mural</button>
+    </form>
+{% endblock %}

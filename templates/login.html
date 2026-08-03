@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Login do administrador</h2>
+
+    {% with mensagens = get_flashed_messages() %}
+        {% if mensagens %}
+            {% for mensagem in mensagens %}
+                <p class="aviso-erro">{{ mensagem }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="formulario">
+        <label for="senha">Senha de administrador</label>
+        <input type="password" id="senha" name="senha" required autofocus>
+
+        <button type="submit">Entrar</button>
+    </form>
+{% endblock %}

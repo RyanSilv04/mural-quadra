@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <!-- essa linha é essencial pro site funcionar bem no celular -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mural da Quadra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="topo">
+        <h1>⚽💨🤾🏽‍♂️ Mural da Quadra</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Início</a>
+            {% if session.get('admin_logado') %}
+                <a href="{{ url_for('novo_post') }}">+ Novo aviso</a>
+                <a href="{{ url_for('logout') }}">Sair</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Entrar como admin</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="conteudo">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="rodape">
+        <p>Trabalho acadêmico — Mural Online da Quadra</p>
+    </footer>
+</body>
+</html>

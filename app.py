@@ -18,7 +18,8 @@ DB_CONFIG = {
     "password": os.environ.get("DB_PASSWORD", ""),
     "database": os.environ.get("DB_NAME", "mural_quadra"),
     "port": int(os.environ.get("DB_PORT", 3306)),
-    "charset": "utf8mb4"  # para corrigir os emojis e SE DEUS quiser acentos também!
+    "charset": "utf8mb4",  # para corrigir os emojis e SE DEUS quiser acentos também!
+    "ssl_disabled": os.environ.get("DB_SSL_DISABLED", "False").lower() == "true"
 }
 
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")  # senha do administrador para deletar postS e etc...

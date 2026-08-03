@@ -4,10 +4,11 @@ import os
 from functools import wraps
 from dotenv import load_dotenv
 
-load_dotenv() # lê o aquivo .env e carrega tudo como variavel de ambiente
+load_dotenv()  # lê o aquivo .env e carrega tudo como variavel de ambiente
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "troque-esta-chave-depois")  # chave secreta para sessões (cookies) do Flask
+# chave secreta para sessões (cookies) do Flask
+app.secret_key = os.environ.get("SECRET_KEY", "troque-esta-chave-depois")
 
 # ---- CONFIGURAÇÃO DO BANCO ----
 # Lê das variáveis de ambiente se existirem
@@ -22,26 +23,31 @@ DB_CONFIG = {
     "ssl_disabled": os.environ.get("DB_SSL_DISABLED", "False").lower() == "true"
 }
 
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")  # senha do administrador para deletar postS e etc...
+# senha do administrador para deletar postS e etc...
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
+
 
 def get_connection():
     return mysql.connector.connect(**DB_CONFIG)
 
 # Função que protege rotas (só deixa passar quem escrever as palavrinhas magicas)
+
+
 def login_necessario(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if request.args.get('senha') != ADMIN_PASSWORD:
-            return redirect(url_for('index'))
+        if not session.get('admin_logado'):
+            return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-    
+
 
 # --- ROTA: PÁGINA PRINCIPAL (o mural) ---
 @app.route('/')
 def index():
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)  # dictionary=True -> retorna cada linha como dict
+    # dictionary=True -> retorna cada linha como dict
+    cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM posts ORDER BY criado_em DESC")
     posts = cursor.fetchall()
     cursor.close()
@@ -57,8 +63,10 @@ def index():
     ]
 
     return render_template('index.html', posts=posts, datas_ocupadas=datas_ocupadas, admin_logado=session.get('admin_logado', False))
-                           
+
 # ROTA DE LOGIN DO ADMIN
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -74,6 +82,8 @@ def login():
     return render_template('login.html')
 
 # ROTA DE LOGOUT DO ADMIN
+
+
 @app.route('/logout')
 def logout():
     session.pop('admin_logado', None)
@@ -81,6 +91,8 @@ def logout():
     return redirect(url_for('index'))
 
 # -- ROTA: CRIAR NOVO AVISO/EVENTO --
+
+
 @app.route('/novo', methods=['GET', 'POST'])
 @login_necessario
 def novo_post():
@@ -120,6 +132,6 @@ def deletar_post(post_id):
 if __name__ == '__main__':
 
     # No seu PC roda na porta 5000. No Render, ele informa a porta certa através da variável de ambiente PORT.
-    
+
     port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
